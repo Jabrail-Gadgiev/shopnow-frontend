@@ -3,13 +3,17 @@ import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
+const mockProducts = [
+  { _id: "1", name: "Mock Product 1", description: "A sample product", price: 19.99 },
+  { _id: "2", name: "Mock Product 2", description: "Another item", price: 29.99 },
+  { _id: "3", name: "Mock Product 3", description: "Great value", price: 9.99 }
+];
+
 function Home() {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/products")
-      .then((res) => res.json())
-      .then((data) => setProducts(data));
+    setProducts(mockProducts);
   }, []);
 
   const addToCart = (product) => {
@@ -49,29 +53,9 @@ function Cart() {
   }, []);
 
   const handleCheckout = () => {
-    const token = localStorage.getItem("token");
-    if (!token) return navigate("/login");
-
-    const items = cartItems.map((item) => ({
-      productId: item._id,
-      quantity: item.quantity,
-    }));
-
-    fetch("http://localhost:5000/api/orders", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ items }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        alert("Order placed successfully!");
-        localStorage.removeItem("cart");
-        setCartItems([]);
-      })
-      .catch(() => alert("Checkout failed"));
+    alert("Mock checkout complete!");
+    localStorage.removeItem("cart");
+    setCartItems([]);
   };
 
   return (
@@ -102,20 +86,12 @@ function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch("http://localhost:5000/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.token) {
-          localStorage.setItem("token", data.token);
-          navigate("/");
-        } else {
-          alert("Invalid credentials");
-        }
-      });
+    if (email === "test@example.com" && password === "password") {
+      localStorage.setItem("token", "mock-token");
+      navigate("/");
+    } else {
+      alert("Invalid credentials");
+    }
   };
 
   return (
